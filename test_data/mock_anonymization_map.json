@@ -1,0 +1,50 @@
+[
+  {
+    "page": 1,
+    "bbox": [303.64, 599.33, 530.39, 613.73],
+    "original_text": "Drylab family: Unni Jacobsen, Torstein Jahr,",
+    "fake_text": "Drylab family: Ali Kaya, Mehmet Demir,",
+    "pii_type": "NAME",
+    "font": "PdbpbbLato-Regular",
+    "size": 12.0,
+    "color": 0,
+    "is_handwritten": false,
+    "is_signature": false
+  },
+  {
+    "page": 1,
+    "bbox": [303.64, 616.13, 537.39, 630.53],
+    "original_text": "Suzanne Bolstad, Eivind Bergene, Turid Brun,",
+    "fake_text": "Ayşe Yılmaz, Fatma Arslan, Zeynep Çelik,",
+    "pii_type": "NAME",
+    "font": "PdbpbbLato-Regular",
+    "size": 12.0,
+    "color": 0,
+    "is_handwritten": false,
+    "is_signature": false
+  },
+  {
+    "page": 2,
+    "bbox": [427.98, 141.89, 493.80, 156.29],
+    "original_text": " Dave Stump",
+    "fake_text": " Hasan Öztürk",
+    "pii_type": "NAME",
+    "font": "PdbpbbLato-Regular",
+    "size": 12.0,
+    "color": 16755002,
+    "is_handwritten": false,
+    "is_signature": false
+  },
+  {
+    "page": 2,
+    "bbox": [56.69, 759.59, 285.68, 773.99],
+    "original_text": "Caitlin Burns joining us as a mentor. She's an",
+    "fake_text": "Selin Doğan joining us as a mentor. She's an",
+    "pii_type": "NAME",
+    "font": "PdbpbbLato-Regular",
+    "size": 12.0,
+    "color": 0,
+    "is_handwritten": false,
+    "is_signature": false
+  }
+]
