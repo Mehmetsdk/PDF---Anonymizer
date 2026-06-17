@@ -1,0 +1,117 @@
+{
+  "replacements": [
+    {
+      "page": 1,
+      "type": "PERSON",
+      "original_text": "Mehmet Yılmaz",
+      "fake_text": "Menişan Silanur Şener Duran",
+      "bbox": [
+        100,
+        120,
+        250,
+        140
+      ]
+    },
+    {
+      "page": 1,
+      "type": "ORGANIZATION",
+      "original_text": "Acme Teknoloji A.Ş.",
+      "fake_text": "Bilge Ltd.",
+      "bbox": [
+        100,
+        160,
+        320,
+        180
+      ]
+    },
+    {
+      "page": 1,
+      "type": "EMAIL",
+      "original_text": "mehmet.yilmaz@example.com",
+      "fake_text": "yildirimhenif@example.com",
+      "bbox": [
+        100,
+        200,
+        350,
+        220
+      ]
+    },
+    {
+      "page": 1,
+      "type": "PHONE",
+      "original_text": "+90 532 111 22 33",
+      "fake_text": "+90 509 876 54 32",
+      "bbox": [
+        100,
+        240,
+        280,
+        260
+      ]
+    },
+    {
+      "page": 2,
+      "type": "TURKISH_ID",
+      "original_text": "12345678901",
+      "fake_text": "65432109820",
+      "bbox": [
+        100,
+        100,
+        220,
+        120
+      ]
+    },
+    {
+      "page": 2,
+      "type": "IBAN",
+      "original_text": "TR33 0006 1005 1978 6457 8413 26",
+      "fake_text": "TR65 4321 0987 6543 2109 8765 43",
+      "bbox": [
+        100,
+        140,
+        400,
+        160
+      ]
+    },
+    {
+      "page": 2,
+      "type": "STUDENT_ID",
+      "original_text": "2020123456",
+      "fake_text": "5432109876",
+      "bbox": [
+        100,
+        180,
+        200,
+        200
+      ]
+    },
+    {
+      "page": 3,
+      "type": "SIGNATURE",
+      "original_text": "M. Yılmaz",
+      "fake_text": "Generated Signature",
+      "bbox": [
+        350,
+        500,
+        480,
+        540
+      ],
+      "metadata": {
+        "placeholder": true,
+        "signature_generation": "pending",
+        "original_length": 9
+      }
+    },
+    {
+      "page": 3,
+      "type": "PERSON",
+      "original_text": "Mehmet Yılmaz",
+      "fake_text": "Menişan Silanur Şener Duran",
+      "bbox": [
+        100,
+        300,
+        250,
+        320
+      ]
+    }
+  ]
+}

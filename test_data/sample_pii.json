@@ -1,0 +1,58 @@
+{
+  "detections": [
+    {
+      "page": 1,
+      "type": "PERSON",
+      "text": "Mehmet Yılmaz",
+      "bbox": [100, 120, 250, 140]
+    },
+    {
+      "page": 1,
+      "type": "ORGANIZATION",
+      "text": "Acme Teknoloji A.Ş.",
+      "bbox": [100, 160, 320, 180]
+    },
+    {
+      "page": 1,
+      "type": "EMAIL",
+      "text": "mehmet.yilmaz@example.com",
+      "bbox": [100, 200, 350, 220]
+    },
+    {
+      "page": 1,
+      "type": "PHONE",
+      "text": "+90 532 111 22 33",
+      "bbox": [100, 240, 280, 260]
+    },
+    {
+      "page": 2,
+      "type": "TURKISH_ID",
+      "text": "12345678901",
+      "bbox": [100, 100, 220, 120]
+    },
+    {
+      "page": 2,
+      "type": "IBAN",
+      "text": "TR33 0006 1005 1978 6457 8413 26",
+      "bbox": [100, 140, 400, 160]
+    },
+    {
+      "page": 2,
+      "type": "STUDENT_ID",
+      "text": "2020123456",
+      "bbox": [100, 180, 200, 200]
+    },
+    {
+      "page": 3,
+      "type": "SIGNATURE",
+      "text": "M. Yılmaz",
+      "bbox": [350, 500, 480, 540]
+    },
+    {
+      "page": 3,
+      "type": "PERSON",
+      "text": "Mehmet Yılmaz",
+      "bbox": [100, 300, 250, 320]
+    }
+  ]
+}
