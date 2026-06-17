@@ -2,6 +2,7 @@ import fitz  # PyMuPDF
 import json
 import sys
 import io
+import argparse
 
 try:
     import pytesseract
@@ -63,7 +64,13 @@ def is_scanned_pdf(pdf_path, text_threshold=20):
     return avg_text_per_page < text_threshold
 
 
-def ocr_pdf(pdf_path, dpi=300):
+def ocr_pdf(pdf_path, dpi=300, min_confidence=0):
+    """Run OCR on each page of a scanned PDF and return text with bounding boxes.
+
+    Words with confidence below `min_confidence` are filtered out, since
+    Tesseract assigns conf=-1 to non-text regions and very low values to
+    noisy/garbage detections.
+    """
     if not OCR_AVAILABLE:
         print("ERROR: pytesseract/Pillow not installed. Run: pip3 install pytesseract pillow")
         sys.exit(1)
@@ -94,6 +101,10 @@ def ocr_pdf(pdf_path, dpi=300):
             if not word:
                 continue
 
+            conf = ocr_data["conf"][i]
+            if conf < min_confidence:
+                continue
+
             x = ocr_data["left"][i] / zoom
             y = ocr_data["top"][i] / zoom
             w = ocr_data["width"][i] / zoom
@@ -105,7 +116,7 @@ def ocr_pdf(pdf_path, dpi=300):
                 "font": "OCR",
                 "size": round(h, 2),
                 "color": 0,
-                "confidence": ocr_data["conf"][i],
+                "confidence": conf,
             })
 
         result.append(page_data)
@@ -114,24 +125,28 @@ def ocr_pdf(pdf_path, dpi=300):
     return result
 
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python extract.py <pdf_file>")
-        sys.exit(1)
+def main():
+    parser = argparse.ArgumentParser(description="Extract text, layout, and images from a PDF.")
+    parser.add_argument("pdf_file", help="Path to the input PDF file")
+    parser.add_argument("-o", "--output", default="output.json", help="Path to the output JSON file (default: output.json)")
+    parser.add_argument("--min-confidence", type=int, default=0, help="Minimum OCR confidence to keep a word (default: 0)")
+    args = parser.parse_args()
 
-    pdf_path = sys.argv[1]
-    scanned = is_scanned_pdf(pdf_path)
+    scanned = is_scanned_pdf(args.pdf_file)
 
     if scanned:
         print("This PDF appears to be scanned. Running OCR...")
-        data = ocr_pdf(pdf_path)
+        data = ocr_pdf(args.pdf_file, min_confidence=args.min_confidence)
     else:
-        data = extract_text_with_layout(pdf_path)
+        data = extract_text_with_layout(args.pdf_file)
 
-    output_path = "output.json"
-    with open(output_path, "w", encoding="utf-8") as f:
+    with open(args.output, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-    print(f"Output saved to: {output_path}")
+    print(f"Output saved to: {args.output}")
     print(f"Total pages: {len(data)}")
     print(f"Mode: {'OCR' if scanned else 'native text extraction'}")
+
+
+if __name__ == "__main__":
+    main()
