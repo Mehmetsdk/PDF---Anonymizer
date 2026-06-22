@@ -1,0 +1,132 @@
+{
+  "schema_version": "person2-pii-v1",
+  "source": "Person 2 - PII Detection",
+  "ner_status": "disabled",
+  "detections": [
+    {
+      "page_no": 1,
+      "type": "PERSON",
+      "original_text": "Can Koksal",
+      "bbox": [
+        130.0,
+        80.0,
+        210.0,
+        95.0
+      ],
+      "confidence": 0.76,
+      "method": "label_heuristic",
+      "rule": "person_label",
+      "font": "Arial",
+      "size": 11.0
+    },
+    {
+      "page_no": 1,
+      "type": "EMAIL",
+      "original_text": "can.koksal@example.com",
+      "bbox": [
+        98.28,
+        110.0,
+        250.0,
+        125.0
+      ],
+      "confidence": 0.99,
+      "method": "regex",
+      "rule": "email",
+      "font": "Arial",
+      "size": 11.0
+    },
+    {
+      "page_no": 1,
+      "type": "PHONE",
+      "original_text": "+90 532 123 45 67",
+      "bbox": [
+        103.96,
+        140.0,
+        235.0,
+        155.0
+      ],
+      "confidence": 0.92,
+      "method": "regex",
+      "rule": "phone",
+      "font": "Arial",
+      "size": 11.0
+    },
+    {
+      "page_no": 1,
+      "type": "TURKISH_ID",
+      "original_text": "10000000146",
+      "bbox": [
+        84.67,
+        170.0,
+        180.0,
+        185.0
+      ],
+      "confidence": 0.98,
+      "method": "regex",
+      "rule": "turkish_tc_id",
+      "font": "Arial",
+      "size": 11.0
+    },
+    {
+      "page_no": 1,
+      "type": "STUDENT_ID",
+      "original_text": "123456",
+      "bbox": [
+        143.33,
+        200.0,
+        190.0,
+        215.0
+      ],
+      "confidence": 0.88,
+      "method": "regex",
+      "rule": "student_index_context",
+      "font": "Arial",
+      "size": 11.0
+    },
+    {
+      "page_no": 1,
+      "type": "ORGANIZATION",
+      "original_text": "EvCenter A.Ş",
+      "bbox": [
+        123.64,
+        230.0,
+        230.0,
+        245.0
+      ],
+      "confidence": 0.73,
+      "method": "label_heuristic",
+      "rule": "organization_label",
+      "font": "Arial",
+      "size": 11.0
+    },
+    {
+      "page_no": 1,
+      "type": "SIGNATURE",
+      "original_text": "Signature",
+      "bbox": [
+        119.0,
+        292.0,
+        333.0,
+        351.0
+      ],
+      "confidence": 0.66,
+      "method": "field_heuristic",
+      "rule": "signature_keyword",
+      "label_bbox": [
+        50.0,
+        300.0,
+        113.0,
+        315.0
+      ]
+    }
+  ],
+  "summary": {
+    "EMAIL": 1,
+    "ORGANIZATION": 1,
+    "PERSON": 1,
+    "PHONE": 1,
+    "SIGNATURE": 1,
+    "STUDENT_ID": 1,
+    "TURKISH_ID": 1
+  }
+}

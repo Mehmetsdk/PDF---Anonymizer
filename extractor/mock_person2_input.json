@@ -1,0 +1,18 @@
+[
+  {
+    "page": 1,
+    "width": 595,
+    "height": 842,
+    "blocks": [
+      {"text": "Full Name:", "bbox": [50, 80, 120, 95], "font": "Arial-Bold", "size": 11, "color": 0},
+      {"text": "Can Koksal", "bbox": [130, 80, 210, 95], "font": "Arial", "size": 11, "color": 0},
+      {"text": "Email: can.koksal@example.com", "bbox": [50, 110, 250, 125], "font": "Arial", "size": 11, "color": 0},
+      {"text": "Phone: +90 532 123 45 67", "bbox": [50, 140, 235, 155], "font": "Arial", "size": 11, "color": 0},
+      {"text": "TC: 10000000146", "bbox": [50, 170, 180, 185], "font": "Arial", "size": 11, "color": 0},
+      {"text": "Student No: 123456", "bbox": [50, 200, 190, 215], "font": "Arial", "size": 11, "color": 0},
+      {"text": "Company: EvCenter A.Ş.", "bbox": [50, 230, 230, 245], "font": "Arial", "size": 11, "color": 0},
+      {"text": "Signature:", "bbox": [50, 300, 120, 315], "font": "Arial", "size": 11, "color": 0}
+    ],
+    "images": []
+  }
+]

@@ -1,0 +1,5 @@
+# Core Person 2 module uses only Python standard library.
+# Optional NER support:
+spacy>=3.7.0
+# Install at least one spaCy model if you want --enable-ner, for example:
+# python -m spacy download en_core_web_sm

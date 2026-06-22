@@ -1,0 +1,7 @@
+{
+  "schema_version": "person2-pii-v1",
+  "source": "Person 2 - PII Detection",
+  "ner_status": "disabled",
+  "detections": [],
+  "summary": {}
+}
