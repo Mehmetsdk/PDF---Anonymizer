@@ -17,12 +17,14 @@ The same original value always maps to the same fake value (e.g. `Mehmet Yılmaz
 Requires Python 3.11+.
 
 ```bash
+cd fake_generator
 pip install -r requirements.txt
 ```
 
 ## Usage
 
 ```bash
+cd fake_generator
 python fake_data_generator.py pii_output.json -o fake_data_output.json
 ```
 
@@ -111,6 +113,7 @@ The loader also accepts `original_text` instead of `text`, or a top-level list o
 ## Testing
 
 ```bash
+cd fake_generator
 pytest
 ```
 
@@ -123,7 +126,8 @@ Tests cover:
 ## Project Structure
 
 ```
-Task 3/
+fake_generator/
+├── .gitignore
 ├── fake_data_generator.py      # Main module + CLI
 ├── requirements.txt
 ├── README.md

@@ -58,30 +58,16 @@ def _generate_turkish_id(original: str) -> str:
 
     Preserves non-digit separators from the original when present.
     """
-    digits_only = re.sub(r"\D", "", original)
-    if len(digits_only) != 11:
-        # Fallback: build 11 digits from seed when format is unexpected.
-        seed = _seed_from_text(original)
-        digits = [_digit_at(seed, 0, exclude_zero=True)]
-        for i in range(1, 9):
-            digits.append(_digit_at(seed, i))
-        odd_sum = sum(int(digits[i]) for i in range(0, 9, 2))
-        even_sum = sum(int(digits[i]) for i in range(1, 8, 2))
-        tenth = (odd_sum * 7 - even_sum) % 10
-        digits.append(str(tenth))
-        digits.append(str(sum(int(d) for d in digits) % 10))
-        new_digits = "".join(digits)
-    else:
-        seed = _seed_from_text(original)
-        digits = [_digit_at(seed, 0, exclude_zero=True)]
-        for i in range(1, 9):
-            digits.append(_digit_at(seed, i))
-        odd_sum = sum(int(digits[i]) for i in range(0, 9, 2))
-        even_sum = sum(int(digits[i]) for i in range(1, 8, 2))
-        tenth = (odd_sum * 7 - even_sum) % 10
-        digits.append(str(tenth))
-        digits.append(str(sum(int(d) for d in digits) % 10))
-        new_digits = "".join(digits)
+    seed = _seed_from_text(original)
+    digits = [_digit_at(seed, 0, exclude_zero=True)]
+    for i in range(1, 9):
+        digits.append(_digit_at(seed, i))
+    odd_sum = sum(int(digits[i]) for i in range(0, 9, 2))
+    even_sum = sum(int(digits[i]) for i in range(1, 8, 2))
+    tenth = (odd_sum * 7 - even_sum) % 10
+    digits.append(str(tenth))
+    digits.append(str(sum(int(d) for d in digits) % 10))
+    new_digits = "".join(digits)
 
     return _preserve_digit_structure(original, new_digits)
 
