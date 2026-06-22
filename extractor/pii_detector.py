@@ -27,6 +27,13 @@ Page = Dict[str, Any]
 Block = Dict[str, Any]
 Detection = Dict[str, Any]
 
+# Shared PII type names used by Person 2 and Person 3.
+# Keep these values aligned with the fake-data generation module.
+PII_PERSON = "PERSON"
+PII_TURKISH_ID = "TURKISH_ID"
+PII_STUDENT_ID = "STUDENT_ID"
+PII_SIGNATURE = "SIGNATURE"
+
 
 @dataclass(frozen=True)
 class RegexRule:
@@ -271,13 +278,13 @@ HANDWRITING_KEYWORD_RE = re.compile(r"(?i)\b(handwriting|handwritten|el\s*yazıs
 REGEX_RULES: List[RegexRule] = [
     RegexRule("email", "EMAIL", EMAIL_RE, 0.99),
     RegexRule("phone", "PHONE", PHONE_RE, 0.92, validator=valid_phone),
-    RegexRule("turkish_tc_id", "TC_ID", TC_RE, 0.98, validator=is_valid_turkish_tc_id),
+    RegexRule("turkish_tc_id", PII_TURKISH_ID, TC_RE, 0.98, validator=is_valid_turkish_tc_id),
     RegexRule("iban_tr", "IBAN", IBAN_TR_RE, 0.97),
-    RegexRule("student_index_context", "STUDENT_INDEX", STUDENT_INDEX_CONTEXT_RE, 0.88, group=1),
+    RegexRule("student_index_context", PII_STUDENT_ID, STUDENT_INDEX_CONTEXT_RE, 0.88, group=1),
 ]
 
 HEURISTIC_RULES: List[RegexRule] = [
-    RegexRule("person_label", "PERSON_NAME", PERSON_LABEL_RE, 0.76, method="label_heuristic", group=1),
+    RegexRule("person_label", PII_PERSON, PERSON_LABEL_RE, 0.76, method="label_heuristic", group=1),
     RegexRule("organization_label", "ORGANIZATION", ORG_LABEL_RE, 0.73, method="label_heuristic", group=1),
     RegexRule("organization_suffix", "ORGANIZATION", ORG_SUFFIX_RE, 0.70, method="suffix_heuristic", group=1),
 ]
@@ -407,7 +414,7 @@ def detect_signature_and_handwriting_fields(page: Page, page_no: int, lines: Lis
     for line in lines:
         text = line.get("text", "")
         for regex, pii_type, rule_name, mode, confidence in [
-            (SIGNATURE_KEYWORD_RE, "SIGNATURE_FIELD", "signature_keyword", "signature", 0.66),
+            (SIGNATURE_KEYWORD_RE, PII_SIGNATURE, "signature_keyword", "signature", 0.66),
             (HANDWRITING_KEYWORD_RE, "HANDWRITING_FIELD", "handwriting_keyword", "handwriting", 0.62),
         ]:
             for match in regex.finditer(text):
@@ -435,7 +442,7 @@ def detect_possible_signature_images(page: Page, page_no: int, text_detections: 
     The extractor only exposes image bboxes, not image content. So this is only
     a helpful heuristic, not a true visual signature detector.
     """
-    signature_labels = [d for d in text_detections if d.get("type") == "SIGNATURE_FIELD"]
+    signature_labels = [d for d in text_detections if d.get("type") == PII_SIGNATURE]
     if not signature_labels:
         return []
 
@@ -508,7 +515,7 @@ def load_spacy_pipeline(model_name: Optional[str] = None):
 def map_spacy_label(label: str) -> Optional[str]:
     label = label.upper()
     if label in {"PERSON", "PER"}:
-        return "PERSON_NAME"
+        return PII_PERSON
     if label in {"ORG", "ORGANIZATION"}:
         return "ORGANIZATION"
     if label in {"GPE", "LOC", "LOCATION"}:

@@ -5,7 +5,7 @@
   "detections": [
     {
       "page_no": 1,
-      "type": "PERSON_NAME",
+      "type": "PERSON",
       "original_text": "Can Koksal",
       "bbox": [
         130.0,
@@ -53,7 +53,7 @@
     },
     {
       "page_no": 1,
-      "type": "TC_ID",
+      "type": "TURKISH_ID",
       "original_text": "10000000146",
       "bbox": [
         84.67,
@@ -69,7 +69,7 @@
     },
     {
       "page_no": 1,
-      "type": "STUDENT_INDEX",
+      "type": "STUDENT_ID",
       "original_text": "123456",
       "bbox": [
         143.33,
@@ -101,7 +101,7 @@
     },
     {
       "page_no": 1,
-      "type": "SIGNATURE_FIELD",
+      "type": "SIGNATURE",
       "original_text": "Signature",
       "bbox": [
         119.0,
@@ -123,10 +123,10 @@
   "summary": {
     "EMAIL": 1,
     "ORGANIZATION": 1,
-    "PERSON_NAME": 1,
+    "PERSON": 1,
     "PHONE": 1,
-    "SIGNATURE_FIELD": 1,
-    "STUDENT_INDEX": 1,
-    "TC_ID": 1
+    "SIGNATURE": 1,
+    "STUDENT_ID": 1,
+    "TURKISH_ID": 1
   }
 }

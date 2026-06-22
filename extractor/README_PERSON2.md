@@ -70,18 +70,20 @@ python pii_detector.py sample_output.json -o pii_output.json --enable-ner --spac
 
 - `EMAIL`
 - `PHONE`
-- `TC_ID`
+- `TURKISH_ID`
 - `IBAN`
-- `STUDENT_INDEX`
-- `PERSON_NAME`
+- `STUDENT_ID`
+- `PERSON`
 - `ORGANIZATION`
 - `LOCATION` with spaCy NER
-- `SIGNATURE_FIELD`
+- `SIGNATURE`
 - `HANDWRITING_FIELD`
 - `SIGNATURE_IMAGE`
 
 ## Notes for Person 3 and Person 4
 
 Person 3 should use `type` + `original_text` to generate replacement fake values.
+
+Shared type names agreed with Person 3 are `PERSON`, `TURKISH_ID`, `STUDENT_ID`, and `SIGNATURE`.
 
 Person 4 should use `page_no` + `bbox` to redact/replace the detected value in the PDF. For signature and handwriting fields, `bbox` is a heuristic target area and `label_bbox` is the label location.
