@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 from pathlib import Path
 from typing import Any
@@ -31,14 +32,17 @@ PII_TYPES = {
 SIGNATURE_PLACEHOLDER = "Generated Signature"
 
 
+_SESSION_KEY: int = 0  # set once per build_replacements() call
+
+
 def _seed_from_text(text: str) -> int:
-    """Derive a stable integer seed from original text for deterministic output."""
-    digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    """Derive a seed from text + session key so each run gives different fakes."""
+    digest = hashlib.sha256(f"{_SESSION_KEY}:{text}".encode("utf-8")).hexdigest()
     return int(digest[:16], 16)
 
 
 def _faker_for_text(text: str, locale: str = "tr_TR") -> Faker:
-    """Return a Faker instance seeded from the original text."""
+    """Return a Faker instance seeded from text + current session key."""
     fake = Faker(locale)
     fake.seed_instance(_seed_from_text(text))
     return fake
@@ -257,10 +261,14 @@ def build_replacements(
     """
     Build replacement records from PII detections.
 
-    Uses a mapping cache so the same original_text always gets the same fake_text.
+    Uses a mapping cache so the same original_text always gets the same fake_text
+    within a single run. A fresh random session key is generated each call so
+    different runs produce different fakes for the same input.
     """
+    global _SESSION_KEY
     if mapping is None:
         mapping = {}
+        _SESSION_KEY = int.from_bytes(os.urandom(8), "big")
 
     replacements: list[dict[str, Any]] = []
 
