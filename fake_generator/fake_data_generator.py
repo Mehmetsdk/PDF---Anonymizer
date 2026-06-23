@@ -190,10 +190,31 @@ def _generate_person(original: str) -> str:
     return fake.name()
 
 
+_SENSITIVE_SURNAMES = {
+    "öcalan", "ocalan", "pkk", "apocular",
+}
+
+_COMPANY_SUFFIXES = ["A.S.", "Ltd. Sti.", "Grup", "Holding", "Teknoloji", "Insaat", "Danismanlik"]
+_COMPANY_PREFIXES = [
+    "Anadolu", "Akdeniz", "Bogazici", "Karadeniz", "Toros", "Ege", "Marmara",
+    "Yildiz", "Atlas", "Altin", "Günes", "Demir", "Celik", "Kartal", "Bahar",
+]
+
 def _generate_organization(original: str) -> str:
-    """Generate a realistic company name."""
+    """Generate a realistic company name, avoiding politically sensitive surnames."""
     fake = _faker_for_text(original)
-    return fake.company()
+    for attempt in range(10):
+        candidate = fake.company()
+        lower = candidate.lower()
+        if not any(s in lower for s in _SENSITIVE_SURNAMES):
+            return candidate
+        # Reseed with a different offset and try again
+        fake.seed_instance(_seed_from_text(original) + attempt + 1)
+    # Fallback: build a safe name from controlled word lists
+    seed = _seed_from_text(original)
+    prefix = _COMPANY_PREFIXES[seed % len(_COMPANY_PREFIXES)]
+    suffix = _COMPANY_SUFFIXES[(seed // len(_COMPANY_PREFIXES)) % len(_COMPANY_SUFFIXES)]
+    return f"{prefix} {suffix}"
 
 
 def _generate_signature(original: str) -> str:
