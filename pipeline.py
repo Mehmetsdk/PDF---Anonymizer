@@ -1,6 +1,6 @@
 """
-PDF Anonymizer — Full Pipeline
-Chains all 4 modules: extract → detect PII → generate fakes → reconstruct
+PDF Anonymizer - Full Pipeline
+Chains all 4 modules: extract -> detect PII -> generate fakes -> reconstruct
 """
 import argparse
 import json
@@ -69,7 +69,7 @@ def run_pipeline(
     layout_path.write_text(
         json.dumps(layout, ensure_ascii=False, indent=2), encoding="utf-8"
     )
-    print(f"      {sum(len(p['blocks']) for p in layout)} text blocks saved → {layout_path}")
+    print(f"      {sum(len(p['blocks']) for p in layout)} text blocks saved -> {layout_path}")
 
     # ── Step 2: Detect PII ─────────────────────────────────────────────────
     print("[2/4] Detecting PII...")
@@ -80,7 +80,7 @@ def run_pipeline(
     pii_path.write_text(
         json.dumps(pii_result, ensure_ascii=False, indent=2), encoding="utf-8"
     )
-    print(f"      {len(detections)} detections found → {pii_path}")
+    print(f"      {len(detections)} detections found -> {pii_path}")
     for pii_type, count in pii_result.get("summary", {}).items():
         print(f"        {pii_type}: {count}")
 
@@ -99,7 +99,7 @@ def run_pipeline(
         json.dumps({"replacements": replacements}, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
-    print(f"      {len(mapping)} unique fake values generated → {fake_path}")
+    print(f"      {len(mapping)} unique fake values generated -> {fake_path}")
 
     # ── Step 4: Reconstruct PDF ────────────────────────────────────────────
     print("[4/4] Reconstructing anonymized PDF...")
@@ -113,8 +113,8 @@ def run_pipeline(
     reconstruct_pdf(str(pdf_path), str(anon_map_path), str(output_path))
 
     print(f"\nDone!")
-    print(f"  Anonymized PDF   → {output_path}")
-    print(f"  Intermediate files → {work_dir}/")
+    print(f"  Anonymized PDF   -> {output_path}")
+    print(f"  Intermediate files -> {work_dir}/")
 
 
 def main():

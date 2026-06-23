@@ -35,8 +35,10 @@ def reconstruct_pdf(original_pdf_path, anonymization_map_path, output_path):
         # Add redaction annotations and apply (removes original text/graphics)
         for r in page_redactions:
             bbox = fitz.Rect(r["bbox"])
+            # Expand bbox slightly horizontally to catch edge characters
+            redact_bbox = bbox + (-4, 0, 4, 0)
             fill = bg_colors[id(r)]
-            page.add_redact_annot(bbox, fill=fill)
+            page.add_redact_annot(redact_bbox, fill=fill)
         page.apply_redactions()
 
         # Insert fake content at each redacted area
