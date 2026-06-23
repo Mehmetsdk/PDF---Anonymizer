@@ -1,8 +1,18 @@
 import fitz  # PyMuPDF
 import json
+import os
 import sys
 from pathlib import Path
 from signature_gen import generate_signature_png
+
+# Unicode-capable font for Turkish characters (Ş Ğ İ Ö Ü Ç ş ğ ı ö ü ç)
+_UNICODE_FONT_PATHS = [
+    r"C:\Windows\Fonts\arial.ttf",
+    r"C:\Windows\Fonts\calibri.ttf",
+    r"C:\Windows\Fonts\tahoma.ttf",
+    r"C:\Windows\Fonts\verdana.ttf",
+]
+_UNICODE_FONT = next((p for p in _UNICODE_FONT_PATHS if os.path.exists(p)), None)
 
 
 def int_to_rgb(color_int):
@@ -35,8 +45,10 @@ def reconstruct_pdf(original_pdf_path, anonymization_map_path, output_path):
         # Add redaction annotations and apply (removes original text/graphics)
         for r in page_redactions:
             bbox = fitz.Rect(r["bbox"])
+            # Expand bbox slightly horizontally to catch edge characters
+            redact_bbox = bbox + (-4, 0, 4, 0)
             fill = bg_colors[id(r)]
-            page.add_redact_annot(bbox, fill=fill)
+            page.add_redact_annot(redact_bbox, fill=fill)
         page.apply_redactions()
 
         # Insert fake content at each redacted area
@@ -74,13 +86,11 @@ def _insert_text(page, bbox, redaction):
 
     # Try to fit text in the original bbox; shrink font if needed
     for font_size in [size, size * 0.9, size * 0.8]:
-        result = page.insert_textbox(
-            bbox,
-            fake_text,
-            fontsize=font_size,
-            color=color,
-            align=fitz.TEXT_ALIGN_LEFT,
-        )
+        kwargs = dict(fontsize=font_size, color=color, align=fitz.TEXT_ALIGN_LEFT)
+        if _UNICODE_FONT:
+            kwargs["fontname"] = "unicode_font"
+            kwargs["fontfile"] = _UNICODE_FONT
+        result = page.insert_textbox(bbox, fake_text, **kwargs)
         if result >= 0:  # >= 0 means text fit
             break
 

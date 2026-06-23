@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 from pathlib import Path
 from typing import Any
@@ -31,14 +32,17 @@ PII_TYPES = {
 SIGNATURE_PLACEHOLDER = "Generated Signature"
 
 
+_SESSION_KEY: int = 0  # set once per build_replacements() call
+
+
 def _seed_from_text(text: str) -> int:
-    """Derive a stable integer seed from original text for deterministic output."""
-    digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    """Derive a seed from text + session key so each run gives different fakes."""
+    digest = hashlib.sha256(f"{_SESSION_KEY}:{text}".encode("utf-8")).hexdigest()
     return int(digest[:16], 16)
 
 
 def _faker_for_text(text: str, locale: str = "tr_TR") -> Faker:
-    """Return a Faker instance seeded from the original text."""
+    """Return a Faker instance seeded from text + current session key."""
     fake = Faker(locale)
     fake.seed_instance(_seed_from_text(text))
     return fake
@@ -190,10 +194,31 @@ def _generate_person(original: str) -> str:
     return fake.name()
 
 
+_SENSITIVE_SURNAMES = {
+    "öcalan", "ocalan", "pkk", "apocular",
+}
+
+_COMPANY_SUFFIXES = ["A.S.", "Ltd. Sti.", "Grup", "Holding", "Teknoloji", "Insaat", "Danismanlik"]
+_COMPANY_PREFIXES = [
+    "Anadolu", "Akdeniz", "Bogazici", "Karadeniz", "Toros", "Ege", "Marmara",
+    "Yildiz", "Atlas", "Altin", "Günes", "Demir", "Celik", "Kartal", "Bahar",
+]
+
 def _generate_organization(original: str) -> str:
-    """Generate a realistic company name."""
+    """Generate a realistic company name, avoiding politically sensitive surnames."""
     fake = _faker_for_text(original)
-    return fake.company()
+    for attempt in range(10):
+        candidate = fake.company()
+        lower = candidate.lower()
+        if not any(s in lower for s in _SENSITIVE_SURNAMES):
+            return candidate
+        # Reseed with a different offset and try again
+        fake.seed_instance(_seed_from_text(original) + attempt + 1)
+    # Fallback: build a safe name from controlled word lists
+    seed = _seed_from_text(original)
+    prefix = _COMPANY_PREFIXES[seed % len(_COMPANY_PREFIXES)]
+    suffix = _COMPANY_SUFFIXES[(seed // len(_COMPANY_PREFIXES)) % len(_COMPANY_SUFFIXES)]
+    return f"{prefix} {suffix}"
 
 
 def _generate_signature(original: str) -> str:
@@ -236,10 +261,14 @@ def build_replacements(
     """
     Build replacement records from PII detections.
 
-    Uses a mapping cache so the same original_text always gets the same fake_text.
+    Uses a mapping cache so the same original_text always gets the same fake_text
+    within a single run. A fresh random session key is generated each call so
+    different runs produce different fakes for the same input.
     """
+    global _SESSION_KEY
     if mapping is None:
         mapping = {}
+        _SESSION_KEY = int.from_bytes(os.urandom(8), "big")
 
     replacements: list[dict[str, Any]] = []
 
