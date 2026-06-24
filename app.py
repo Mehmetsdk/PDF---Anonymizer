@@ -1,8 +1,10 @@
 import json
+import os
 import sys
 import tempfile
 from pathlib import Path
 
+import requests
 import streamlit as st
 
 ROOT = Path(__file__).parent
@@ -16,10 +18,37 @@ from fake_data_generator import build_replacements
 from reconstructor import reconstruct_pdf
 from pipeline import _build_anonymization_map
 
+# n8n webhook URL — set via environment variable or sidebar input
+N8N_WEBHOOK_URL = os.environ.get("N8N_WEBHOOK_URL", "")
+
+
+def _trigger_n8n(webhook_url: str, filename: str, pii_count: int, summary: dict):
+    """Send anonymization result to n8n webhook (fire-and-forget)."""
+    try:
+        requests.post(webhook_url, json={
+            "event": "anonymization_complete",
+            "filename": filename,
+            "pii_detected": pii_count,
+            "summary": summary,
+        }, timeout=5)
+    except Exception:
+        pass  # webhook failure should never block the user
+
+
 st.set_page_config(page_title="PDF Anonymizer", page_icon="lock", layout="centered")
 
 st.title("PDF Anonymizer")
 st.write("Upload a PDF to replace all sensitive data with realistic fake values while preserving the original layout.")
+
+# Sidebar — n8n configuration
+with st.sidebar:
+    st.header("Notifications (n8n)")
+    webhook_url = st.text_input(
+        "n8n Webhook URL",
+        value=N8N_WEBHOOK_URL,
+        placeholder="https://your-n8n.example.com/webhook/...",
+        help="When anonymization finishes, a notification is sent to this URL. Leave empty to disable.",
+    )
 
 uploaded_file = st.file_uploader("Choose a PDF file", type=["pdf"])
 
@@ -66,6 +95,15 @@ if uploaded_file:
             )
             reconstruct_pdf(str(input_path), str(anon_map_path), str(output_path))
             progress.progress(100, text="Done!")
+
+            # Trigger n8n webhook if configured
+            if webhook_url.strip():
+                _trigger_n8n(
+                    webhook_url.strip(),
+                    uploaded_file.name,
+                    len(detections),
+                    pii_result.get("summary", {}),
+                )
 
             # Results
             st.success("Anonymization complete!")
