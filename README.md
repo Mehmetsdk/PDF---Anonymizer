@@ -1,146 +1,73 @@
-# PDF Anonymizer — Fake Data Generator (Person 3)
+# PDF Anonymizer
 
-This module generates realistic fake replacement values for personally identifiable information (PII) detected in PDF documents. It is the bridge between **Person 2 (PII Detection)** and **Person 4 (PDF Reconstruction)**.
+A web application that replaces sensitive personal data (PII) in PDF documents with realistic fake values while preserving the original layout.
 
-## Purpose
+**Live Demo:** https://pdf---anonymizer-rutwhuxacs6yfkjjauyv6u.streamlit.app
 
-The Fake Data Generator:
+## What it does
 
-- Reads `pii_output.json` produced by Person 2
-- Creates deterministic, format-preserving fake values for each PII type
-- Writes `fake_data_output.json` for Person 4 to apply during PDF reconstruction
+Upload a PDF containing sensitive information — names, phone numbers, emails, TC ID numbers, IBANs, student IDs, company names, or signatures — and the tool will:
 
-The same original value always maps to the same fake value (e.g. `Mehmet Yılmaz` → `Ahmet Kaya` everywhere in the document).
+1. Extract the text layout from the PDF
+2. Detect all PII using regex and NER rules
+3. Replace each item with a realistic fake value (Turkish locale)
+4. Reconstruct the PDF with the same fonts, sizes, and positioning
 
-## Installation
+## Team
 
-Requires Python 3.11+.
-
-```bash
-cd fake_generator
-pip install -r requirements.txt
-```
+| Person | Module | Responsibility |
+|--------|--------|----------------|
+| Aysel | Part 1 — PDF Extractor | Text and layout extraction, OCR for scanned PDFs |
+| Can | Part 2 — PII Detector | Regex + NER detection of sensitive fields |
+| Sami | Part 3 — Fake Data Generator | Realistic fake value generation (Faker, tr_TR) |
+| Mehmet | Part 4 — PDF Reconstructor | Redaction and fake text insertion via PyMuPDF |
 
 ## Usage
 
+### Web UI (recommended)
+
+Visit the live app: https://pdf---anonymizer-rutwhuxacs6yfkjjauyv6u.streamlit.app
+
+Upload a PDF, click **Anonymize PDF**, then download the result.
+
+### Command line
+
 ```bash
-cd fake_generator
-python fake_data_generator.py pii_output.json -o fake_data_output.json
+pip install -r requirements.txt
+python pipeline.py input.pdf -o output.pdf
 ```
 
-| Argument | Description |
-|----------|-------------|
-| `input` | Path to `pii_output.json` from Person 2 |
-| `-o`, `--output` | Output path (default: `fake_data_output.json`) |
+### Run locally
 
-### Programmatic use
-
-```python
-from pathlib import Path
-from fake_data_generator import generate_fake_data
-
-mapping = generate_fake_data(
-    Path("pii_output.json"),
-    Path("fake_data_output.json"),
-)
+```bash
+pip install -r requirements.txt
+streamlit run app.py
 ```
 
 ## Supported PII Types
 
-| Type | Replacement strategy |
-|------|---------------------|
-| `PERSON` | Turkish name via Faker (`tr_TR`) |
-| `ORGANIZATION` | Company name via Faker |
-| `EMAIL` | Realistic email, structure preserved when possible |
-| `PHONE` | Turkish phone number, separators preserved |
-| `TURKISH_ID` | Valid-looking 11-digit TC Kimlik No |
-| `IBAN` | Valid-looking Turkish IBAN, formatting preserved |
-| `STUDENT_ID` | Same-length numeric string |
-| `SIGNATURE` | `"Generated Signature"` + metadata for future generation |
-
-## Example Input
-
-`pii_output.json` from Person 2 (see `test_data/sample_pii.json`):
-
-```json
-{
-  "detections": [
-    {
-      "page": 1,
-      "type": "PERSON",
-      "text": "Mehmet Yılmaz",
-      "bbox": [100, 120, 250, 140]
-    },
-    {
-      "page": 1,
-      "type": "PHONE",
-      "text": "+90 532 111 22 33",
-      "bbox": [100, 240, 280, 260]
-    }
-  ]
-}
-```
-
-The loader also accepts `original_text` instead of `text`, or a top-level list of detections.
-
-## Example Output
-
-`fake_data_output.json`:
-
-```json
-{
-  "replacements": [
-    {
-      "page": 1,
-      "type": "PERSON",
-      "original_text": "Mehmet Yılmaz",
-      "fake_text": "Ahmet Kaya",
-      "bbox": [100, 120, 250, 140]
-    },
-    {
-      "page": 1,
-      "type": "PHONE",
-      "original_text": "+90 532 111 22 33",
-      "fake_text": "+90 545 888 77 66",
-      "bbox": [100, 240, 280, 260]
-    }
-  ]
-}
-```
-
-> Note: Actual `fake_text` values are deterministic but depend on the hashing/Faker seed logic. Run the generator on `test_data/sample_pii.json` to produce the bundled `sample_fake_output.json`.
-
-## Testing
-
-```bash
-cd fake_generator
-pytest
-```
-
-Tests cover:
-
-- Deterministic mapping (same input → same output)
-- Format preservation (phone, IBAN, student ID, Turkish ID)
-- Output schema validation
+| Type | Example |
+|------|---------|
+| Person name | Ahmet Yilmaz |
+| Phone number | +90 532 123 45 67 |
+| Email address | ahmet@example.com |
+| TC ID (Turkish national ID) | 12345678950 |
+| IBAN | TR33 0006 1005 1978 6457 84 |
+| Student ID | 20210123456 |
+| Company name | ABC Teknoloji A.S. |
+| Signature | (image replaced with generated signature) |
 
 ## Project Structure
 
 ```
-fake_generator/
-├── .gitignore
-├── fake_data_generator.py      # Main module + CLI
+PDF---Anonymizer/
+├── app.py                  # Streamlit web UI
+├── pipeline.py             # Full pipeline (CLI)
+├── Dockerfile              # Coolify / Docker deployment
 ├── requirements.txt
-├── README.md
-├── test_fake_data_generator.py
-└── test_data/
-    ├── sample_pii.json         # Example Person 2 output
-    └── sample_fake_output.json # Example Person 3 output
+├── extractor/              # Part 1 — PDF text extraction
+├── extractor/pii_detector.py  # Part 2 — PII detection
+├── fake_generator/         # Part 3 — Fake data generation
+├── reconstructor/          # Part 4 — PDF reconstruction
+└── test_data/              # Sample PDFs and JSON files
 ```
-
-## Integration
-
-| Component | Input | Output |
-|-----------|-------|--------|
-| Person 2 | PDF / `output.json` | `pii_output.json` |
-| **Person 3 (this module)** | `pii_output.json` | `fake_data_output.json` |
-| Person 4 | `fake_data_output.json` + original PDF | Anonymized PDF |
