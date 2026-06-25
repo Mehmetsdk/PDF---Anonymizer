@@ -41,7 +41,7 @@ def _seed_from_text(text: str) -> int:
     return int(digest[:16], 16)
 
 
-def _faker_for_text(text: str, locale: str = "tr_TR") -> Faker:
+def _faker_for_text(text: str, locale: str = "en_US") -> Faker:
     """Return a Faker instance seeded from text + current session key."""
     fake = Faker(locale)
     fake.seed_instance(_seed_from_text(text))
