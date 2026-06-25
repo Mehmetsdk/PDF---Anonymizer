@@ -84,14 +84,17 @@ def _insert_text(page, bbox, redaction):
     size = redaction.get("size", 11)
     fake_text = redaction["fake_text"]
 
-    # Try to fit text in the original bbox; shrink font if needed
-    for font_size in [size, size * 0.9, size * 0.8]:
+    # Extend bbox to the right page margin so fake text always has room
+    page_width = page.rect.width
+    insert_bbox = fitz.Rect(bbox.x0, bbox.y0, min(page_width - 30, max(bbox.x1, bbox.x0 + 200)), bbox.y1)
+
+    for font_size in [size, size * 0.9, size * 0.8, size * 0.7, size * 0.6]:
         kwargs = dict(fontsize=font_size, color=color, align=fitz.TEXT_ALIGN_LEFT)
         if _UNICODE_FONT:
             kwargs["fontname"] = "unicode_font"
             kwargs["fontfile"] = _UNICODE_FONT
-        result = page.insert_textbox(bbox, fake_text, **kwargs)
-        if result >= 0:  # >= 0 means text fit
+        result = page.insert_textbox(insert_bbox, fake_text, **kwargs)
+        if result >= 0:
             break
 
 
